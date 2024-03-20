@@ -21,7 +21,7 @@ library LibStaking {
         // string name;
         // string symbol;
         // uint256 totalSupply;
-        // mapping (address => uint256) balances;
+        mapping (address => uint256) balances;
         
     }
 }

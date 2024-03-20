@@ -6,6 +6,7 @@ import "../contracts/facets/DiamondCutFacet.sol";
 import "../contracts/facets/DiamondLoupeFacet.sol";
 import "../contracts/facets/OwnershipFacet.sol";
 import "../contracts/facets/StakingFaucet.sol";
+import "../contracts/facets/RewardFaucet.sol";
 
 import "../contracts/facets/LayoutChangerFacet.sol";
 import "../contracts/facets/AjidokwuFaucet.sol";
@@ -25,6 +26,7 @@ contract DiamondDeployer is Test, IDiamondCut {
     LayoutChangerFacet lFacet;
     AjidokwuFaucet aji;
     StakingFaucet stake;
+    RewardFaucet reward;
     
 
     function setUp() public {
@@ -36,6 +38,7 @@ contract DiamondDeployer is Test, IDiamondCut {
         lFacet = new LayoutChangerFacet();
         aji = new AjidokwuFaucet();
         stake = new StakingFaucet();
+        // reward = new RewardFaucet();
         // owner = mkaddr("owner");
         // owner = address(this);
         // owner1 = mkaddr("owner1");
@@ -82,6 +85,13 @@ contract DiamondDeployer is Test, IDiamondCut {
                 functionSelectors: generateSelectors("StakingFaucet")
             })
         );
+        //   cut[5] = (
+        //     FacetCut({
+        //         facetAddress: address(stake),
+        //         action: FacetCutAction.Add,
+        //         functionSelectors: generateSelectors("RewardFaucet")
+        //     })
+        // );
 
         //upgrade diamond
         IDiamondCut(address(diamond)).diamondCut(cut, address(0x0), "");
@@ -115,10 +125,10 @@ contract DiamondDeployer is Test, IDiamondCut {
         AjidokwuFaucet l = AjidokwuFaucet(address(diamond));
         l.init();
         //check outputs
-        LibERC20.Layout memory la = l.name1();
+        // LibERC20.Layout memory la = l.name1();
         // uint256 oldBal = l.balanceOf(address(this));
         //  l.mint(address(this), 1000);
-        return(la.name, la.symbol, la.totalSupply);
+        // return(la.name, la.symbol, la.totalSupply);
         //  string memory na = l.name11();
         //  assertEq(na, la.name);
         //  assertEq(l.balanceOf(address(this)), la.name);
@@ -126,22 +136,42 @@ contract DiamondDeployer is Test, IDiamondCut {
         // assertEq(la.name, "one guy");
         // assertEq(l.balanceOf(address(this)), (oldBal + 1000));
     }
-       function testLayoutfacet4() public view returns(uint) {
+    
+       function testLayoutfacet4() public  returns(address)  {
+        AjidokwuFaucet le = AjidokwuFaucet(address(diamond));
+        RewardFaucet lei = RewardFaucet(address(diamond));
         StakingFaucet l = StakingFaucet(address(diamond));
-        // l.init(address(aji));
+        l.init(address(le), address(lei));
+        le.init();
+        // LibERC20.Layout memory la = le.name1();
+        le.balanceOf(address(this));
+        le.balanceOf(msg.sender);
+        // le.balanceOf(address(this));
+        // le.mint(msg.sender, 10000);
+        // le.transfer(msg.sender, 1000);
+        // le.mint(0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496, 1000000000);        
+        // le.balanceOf(msg.sender);
+        le.approve(address(l), 1000);
+        le.balanceOf(address(this));
+        le.balanceOf(msg.sender);
+        // le.transfer(msg.sender, 1000);
+        // StakingFaucet l = StakingFaucet(address(diamond));
+        // l.init(address(aji), address(aji));
         //check outputs
         // LibStaking.Layout memory la = l.layout();
-        // return(la.owner);
+        // return(l.owner);
         // uint256 oldBal = l.balanceOf(address(this));
         //  uint256 na = l.onetwo(100);
-         uint256 na = l.Calculatereward(100, 10);
+         l.stake(100, 10);
+        //  l.unstake();
         // return(la.name, la.symbol, la.totalSupply);
+        return(msg.sender);
         //  string memory na = l.name11();
         //  assertEq(na, la.name);
         //  assertEq(l.balanceOf(address(this)), la.name);
-
-        return(na);
+        // return(na);
         // assertEq(l.balanceOf(address(this)), (oldBal + 1000));
+    
     }
 
     function generateSelectors(

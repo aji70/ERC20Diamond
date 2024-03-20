@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-library LibERC20 {
+library LibReward {
     struct Layout {
         address owner;
         address to;

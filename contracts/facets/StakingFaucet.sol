@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 import "./IERC20.sol";
 import {LibStaking} from "../libraries/LibStaking.sol";
+import {LibERC20} from "../libraries/LibERC20.sol";
+import {LibReward} from "../libraries/LibReward.sol";
 
 
 error ADDRESS_ZERO_DETECTED();
@@ -13,8 +15,11 @@ error NO_STAKE_TO_WITHDRAW();
 error CANNOT_STAKE_NOW_TRY_AGAIN_LATER();
 
 contract StakingFaucet {
+LibERC20.Layout ajidokwu;
+LibReward.Layout reward;
 LibStaking.Layout staking;
     
+
     
     mapping (address => uint) stakeBalance;
     mapping (address => uint) stakeDuration;
@@ -25,17 +30,12 @@ LibStaking.Layout staking;
     event StakingSuccessful (address staker, uint amount, uint staketime) ;
     event UnstakedSuccessful (address staker, uint stakedAmount); 
     
-        function init(address _ajidokwuToken) external {
-            staking.rewardToken = _ajidokwuToken;
+        function init(address _ajidokwuToken, address _rewardToken) external {
+            staking.rewardToken = _rewardToken;
             staking.ajidokwuToken = _ajidokwuToken;
-            staking.owner = address(0x0);
+            staking.owner = msg.sender;
         }
-        function onetwo(uint256 amount) external returns(uint){
-            staking.amount = amount;
-            return (staking.amount);
-        }
-
-
+        
     function stake(uint256 _amount, uint _duration) external{
         staking.amount = _amount;
         staking.duration = _duration;
@@ -52,7 +52,7 @@ LibStaking.Layout staking;
             }
         // require(_amount > 0, "Can't stake zero value");
 
-        if(IERC20(staking.ajidokwuToken).balanceOf(msg.sender) <= _amount){
+        if(IAjidokwuFaucet(staking.ajidokwuToken).balanceOf(ajidokwu.owner) <= staking.amount){
             revert NOT_ENOUGH_TOKENS();
         }
         // require(IERC20(ajidokwuToken).balanceOf(msg.sender) >= _amount, "Not enough tokens to stake");
@@ -60,7 +60,7 @@ LibStaking.Layout staking;
             revert STAKE_TIME_MUST_BE_IN_THE_FUTURE();
         }
         // require(_duration > 0, "Unstake time Must be in the funture");
-        IERC20(staking.ajidokwuToken).transferFrom(msg.sender, address(this), staking.amount);
+        IAjidokwuFaucet(staking.ajidokwuToken).transferFrom(msg.sender, address(this), staking.amount);
 
             stakeBalance[msg.sender] += staking.amount;
             staking.totalStaked+=staking.amount;
@@ -104,7 +104,7 @@ LibStaking.Layout staking;
         stakeBalance[msg.sender] = 0;
         uint _amount = _stk + Calculatereward(_stk, time);
 
-        IERC20(staking.rewardToken).transfer(msg.sender, _amount);
+        IAjidokwuFaucet(staking.rewardToken).transfer(msg.sender, _amount);
         lastStakedTime[msg.sender] = block.timestamp;
 
         emit UnstakedSuccessful(msg.sender, _amount);
@@ -123,7 +123,7 @@ LibStaking.Layout staking;
          staking.totalStaked -= amount;
         stakeBalance[msg.sender] = 0;
 
-         IERC20(staking.rewardToken).transfer(msg.sender, amount);
+         IAjidokwuFaucet(staking.rewardToken).transfer(msg.sender, amount);
          emit UnstakedSuccessful(msg.sender, amount);
         emit UnstakedSuccessful(msg.sender, block.timestamp);
     }
@@ -162,10 +162,10 @@ LibStaking.Layout staking;
         
         return noOfStakes[msg.sender];
     }
-     function layout() public view returns (LibStaking.Layout memory l) {
-        l.owner = staking.owner;
-        // l.symbol = staking.onetwo;
-        // l.totalSupply = ajidokwu.totalSupply;
+    //  function layout() public view returns (LibStaking.Layout memory l) {
+    //     l.owner = staking.owner;
+    //     // l.symbol = staking.onetwo;
+    //     // l.totalSupply = ajidokwu.totalSupply;
         
-    }
+    // }
 }
