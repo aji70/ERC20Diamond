@@ -1,24 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {LibERC20} from "../libraries/LibERC20.sol";
+import {LibReward} from "../libraries/LibReward.sol";
 
 
 
 
 contract RewardFaucet{
-    LibERC20.Layout reward;
+    LibReward.Layout reward;
 
 	
 
 	function init () external{
-	 reward.symbol = "AJI";
+	 reward.symbol = "RWD";
 	 reward.name = "Reward Token";
 	 reward.totalSupply = 10000;
 		/* i.e the deployer will be the owner at first he can then transfer tokens to any 
 		other account addresses and he will have all the tokens in his wallet at first.*/
 		
 		reward.balances[msg.sender] = reward.totalSupply;
+        
 		reward.owner = msg.sender;
 	}
     //   mapping(address => mapping(address => uint256))  allowed;

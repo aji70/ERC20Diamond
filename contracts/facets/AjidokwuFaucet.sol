@@ -14,7 +14,7 @@ contract AjidokwuFaucet{
 	function init () external{
 	 ajidokwu.symbol = "AJI";
 	 ajidokwu.name = "Ajidokwu";
-	 ajidokwu.totalSupply = 10000;
+	 ajidokwu.totalSupply = 1000000000000;
 		/* i.e the deployer will be the owner at first he can then transfer tokens to any 
 		other account addresses and he will have all the tokens in his wallet at first.*/
 		
