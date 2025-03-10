@@ -8,16 +8,13 @@ library LibERC20 {
         address from;
         address spender;
         uint256 balance;
-        // uint balances;
-        // uint allowed;
         uint256 remaining;
         address account;
         uint256 amount;
         string name;
         string symbol;
         uint256 totalSupply;
-        mapping (address => uint256) balances;
-        mapping(address => mapping(address => uint256))  allowed;
-        
+        mapping(address => uint256) balances;
+        mapping(address => mapping(address => uint256)) allowed;
     }
 }
